@@ -172,7 +172,6 @@ async function init() {
 
   document.getElementById('landing').style.display = 'none';
   document.getElementById('app').classList.add('active');
-  document.getElementById('username-display').textContent = username;
 
   await loadUserData();
   await renderMap();
