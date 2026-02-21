@@ -36,7 +36,7 @@ export async function renderMap(container) {
     .attr("class", "borders")
     .attr("d", path)
     .attr("fill", "none")
-    .attr("stroke", "#1a1a2e")
+    .attr("stroke", "#333")
     .attr("stroke-width", 0.5)
     .style("pointer-events", "none");
 }
