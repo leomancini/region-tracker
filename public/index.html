@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Region Tracker</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="landing">
+    <h2>Region Tracker</h2>
+    <p>Track the countries, US states, and Chinese provinces you've visited. Enter your name to get started.</p>
+    <form id="landing-form">
+      <input type="text" id="name-input" placeholder="Your name" autocomplete="off" required pattern="[a-zA-Z0-9_-]+" />
+      <button type="submit">Go</button>
+    </form>
+  </div>
+
+  <div id="app">
+    <header>
+      <h1>Region Tracker</h1>
+      <p id="user-label">Tracking for: <strong id="username-display"></strong></p>
+    </header>
+
+    <nav id="map-switcher" class="segmented-control">
+      <button class="segment active" data-map="countries">Countries</button>
+      <button class="segment" data-map="states">US States</button>
+      <button class="segment" data-map="provinces">Chinese Provinces</button>
+    </nav>
+
+    <div id="map-container"></div>
+
+    <footer>
+      <p id="stats"></p>
+    </footer>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
