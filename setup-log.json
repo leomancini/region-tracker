@@ -1,0 +1,9 @@
+{
+  "service_id": "region-tracker",
+  "service_name": "Region Tracker",
+  "domain": "https://region-tracker.noshado.ws",
+  "host": "localhost",
+  "port": "3122",
+  "author": "leo",
+  "created_on": "Sat 21 Feb 2026 06:26:58 AM EST"
+}
