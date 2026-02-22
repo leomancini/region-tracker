@@ -1,3 +1,4 @@
+import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
 import { renderMap as renderWorld, names as worldNames } from './maps/world.js';
 import { renderMap as renderUs, names as usNames } from './maps/us.js';
 import { renderMap as renderCanada, names as canadaNames } from './maps/canada.js';
@@ -7,6 +8,7 @@ import { renderMap as renderChina, names as chinaNames } from './maps/china.js';
 let currentMap = 'countries';
 let userData = { countries: [], states: [], provinces: [], 'ca-provinces': [], 'mx-states': [] };
 let username = '';
+let currentZoom = null;
 
 const mapRenderers = {
   countries: renderWorld,
@@ -78,8 +80,31 @@ async function renderMap() {
   const container = document.getElementById('map-container');
   container.innerHTML = '<div class="spinner"></div>';
   await mapRenderers[currentMap](container);
+  setupZoom();
   applyVisitedState();
   updateStats();
+}
+
+function setupZoom() {
+  const svg = d3.select('#map-container svg');
+  if (!svg.node()) return;
+
+  // Wrap all existing children in a <g> for zoom transforms
+  const inner = svg.append('g').attr('class', 'zoom-layer');
+  svg.selectAll(':scope > :not(.zoom-layer)').each(function () {
+    inner.node().appendChild(this);
+  });
+
+  const zoom = d3.zoom()
+    .scaleExtent([1, 8])
+    .on('zoom', (e) => {
+      inner.attr('transform', e.transform);
+    });
+
+  svg.call(zoom);
+  svg.on('dblclick.zoom', null);
+
+  currentZoom = { svg, zoom, inner };
 }
 
 function applyVisitedState() {
@@ -111,16 +136,35 @@ function updateStats() {
   document.getElementById('stats').textContent = `${count} ${label} visited`;
 }
 
+const isTouchDevice = () => 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+let tooltipTimeout = null;
+
 function showTooltip(e, name) {
   const tooltip = document.getElementById('tooltip');
   tooltip.textContent = name;
   tooltip.style.display = 'block';
-  tooltip.style.left = (e.clientX + 12) + 'px';
-  tooltip.style.top = (e.clientY - 30) + 'px';
+
+  if (isTouchDevice()) {
+    // Center tooltip at top of map container
+    const container = document.getElementById('map-container');
+    const rect = container.getBoundingClientRect();
+    tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+    tooltip.style.top = (rect.top + 12) + 'px';
+    tooltip.style.transform = 'translateX(-50%)';
+
+    clearTimeout(tooltipTimeout);
+    tooltipTimeout = setTimeout(hideTooltip, 1500);
+  } else {
+    tooltip.style.transform = 'none';
+    tooltip.style.left = (e.clientX + 12) + 'px';
+    tooltip.style.top = (e.clientY - 30) + 'px';
+  }
 }
 
 function hideTooltip() {
-  document.getElementById('tooltip').style.display = 'none';
+  const tooltip = document.getElementById('tooltip');
+  tooltip.style.display = 'none';
+  tooltip.style.transform = 'none';
 }
 
 function setupEventListeners() {
@@ -150,6 +194,13 @@ function setupEventListeners() {
     } else {
       list.splice(index, 1);
       region.classList.remove('visited');
+    }
+
+    // Show tooltip on tap (mobile)
+    if (isTouchDevice()) {
+      const names = regionNames[currentMap] || {};
+      const name = names[regionId] || regionId;
+      showTooltip(e, name);
     }
 
     updateStats();
