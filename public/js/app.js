@@ -151,28 +151,10 @@ function setupEventListeners() {
   });
 }
 
-function setupLanding() {
-  document.getElementById('landing').classList.add('active');
-  document.getElementById('landing-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('name-input').value.trim().toLowerCase();
-    if (name && /^[a-zA-Z0-9_-]+$/.test(name)) {
-      document.getElementById('landing').style.display = 'none';
-      document.getElementById('loader').classList.add('active');
-      window.location.href = `/user/${name}`;
-    }
-  });
-}
-
-async function init() {
-  username = extractUsername();
-
-  if (!username) {
-    setupLanding();
-    return;
-  }
-
-  document.getElementById('landing').style.display = 'none';
+async function startApp(name) {
+  username = name;
+  history.pushState(null, '', `/user/${name}`);
+  document.getElementById('landing').classList.remove('active');
   document.getElementById('loader').classList.add('active');
 
   await loadUserData();
@@ -181,6 +163,28 @@ async function init() {
   document.getElementById('loader').classList.remove('active');
   document.getElementById('app').classList.add('active');
   setupEventListeners();
+}
+
+function setupLanding() {
+  document.getElementById('landing').classList.add('active');
+  document.getElementById('landing-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name-input').value.trim().toLowerCase();
+    if (name && /^[a-zA-Z0-9_-]+$/.test(name)) {
+      startApp(name);
+    }
+  });
+}
+
+async function init() {
+  const name = extractUsername();
+
+  if (!name) {
+    setupLanding();
+    return;
+  }
+
+  startApp(name);
 }
 
 init();
