@@ -96,7 +96,7 @@ function setupZoom() {
   });
 
   const zoom = d3.zoom()
-    .scaleExtent([1, 8])
+    .scaleExtent([1, 20])
     .on('zoom', (e) => {
       inner.attr('transform', e.transform);
     });
@@ -207,27 +207,29 @@ function setupEventListeners() {
     saveUserData();
   });
 
-  container.addEventListener('mouseover', (e) => {
-    const region = getRegionElement(e.target);
-    if (!region) return;
-    const names = regionNames[currentMap] || {};
-    const name = names[region.id] || region.id;
-    showTooltip(e, name);
-  });
+  if (!isTouchDevice()) {
+    container.addEventListener('mouseover', (e) => {
+      const region = getRegionElement(e.target);
+      if (!region) return;
+      const names = regionNames[currentMap] || {};
+      const name = names[region.id] || region.id;
+      showTooltip(e, name);
+    });
 
-  container.addEventListener('mousemove', (e) => {
-    const tooltip = document.getElementById('tooltip');
-    if (tooltip.style.display === 'block') {
-      tooltip.style.left = (e.clientX + 12) + 'px';
-      tooltip.style.top = (e.clientY - 30) + 'px';
-    }
-  });
+    container.addEventListener('mousemove', (e) => {
+      const tooltip = document.getElementById('tooltip');
+      if (tooltip.style.display === 'block') {
+        tooltip.style.left = (e.clientX + 12) + 'px';
+        tooltip.style.top = (e.clientY - 30) + 'px';
+      }
+    });
 
-  container.addEventListener('mouseout', (e) => {
-    const region = getRegionElement(e.target);
-    if (!region) return;
-    hideTooltip();
-  });
+    container.addEventListener('mouseout', (e) => {
+      const region = getRegionElement(e.target);
+      if (!region) return;
+      hideTooltip();
+    });
+  }
 }
 
 function updateUrl() {
