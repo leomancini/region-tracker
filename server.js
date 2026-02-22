@@ -38,7 +38,9 @@ app.get('/api/:user/regions', async (req, res) => {
   const filePath = path.join(DATA_DIR, `${username}.json`);
   try {
     const raw = await readFile(filePath, 'utf-8');
-    res.json(JSON.parse(raw));
+    const data = JSON.parse(raw);
+    const defaults = { countries: [], states: [], provinces: [], 'ca-provinces': [], 'mx-states': [] };
+    res.json({ ...defaults, ...data });
   } catch (err) {
     if (err.code === 'ENOENT') {
       res.json({ countries: [], states: [], provinces: [], 'ca-provinces': [], 'mx-states': [] });
