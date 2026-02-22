@@ -13,7 +13,6 @@ async function loadData() {
 export async function renderMap(container) {
   const world = await loadData();
   const countries = topojson.feature(world, world.objects.countries);
-  const borders = topojson.mesh(world, world.objects.countries, (a, b) => a !== b);
 
   container.innerHTML = '';
 
@@ -30,15 +29,6 @@ export async function renderMap(container) {
     .attr("class", "country")
     .attr("d", path)
     .attr("id", d => d.id);
-
-  svg.append("path")
-    .datum(borders)
-    .attr("class", "borders")
-    .attr("d", path)
-    .attr("fill", "none")
-    .attr("stroke", "#333")
-    .attr("stroke-width", 0.5)
-    .style("pointer-events", "none");
 }
 
 export const names = {
