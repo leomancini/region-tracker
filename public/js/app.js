@@ -1,26 +1,34 @@
 import { renderMap as renderWorld, names as worldNames } from './maps/world.js';
 import { renderMap as renderUs, names as usNames } from './maps/us.js';
+import { renderMap as renderCanada, names as canadaNames } from './maps/canada.js';
+import { renderMap as renderMexico, names as mexicoNames } from './maps/mexico.js';
 import { renderMap as renderChina, names as chinaNames } from './maps/china.js';
 
 let currentMap = 'countries';
-let userData = { countries: [], states: [], provinces: [] };
+let userData = { countries: [], states: [], provinces: [], 'ca-provinces': [], 'mx-states': [] };
 let username = '';
 
 const mapRenderers = {
   countries: renderWorld,
   states: renderUs,
+  'ca-provinces': renderCanada,
+  'mx-states': renderMexico,
   provinces: renderChina,
 };
 
 const mapLabels = {
   countries: 'countries',
   states: 'states',
+  'ca-provinces': 'provinces',
+  'mx-states': 'states',
   provinces: 'provinces',
 };
 
 const regionNames = {
   countries: worldNames,
   states: usNames,
+  'ca-provinces': canadaNames,
+  'mx-states': mexicoNames,
   provinces: chinaNames,
 };
 

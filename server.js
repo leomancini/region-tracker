@@ -22,12 +22,12 @@ function sanitizeUsername(name) {
 
 function validateRegionData(data) {
   if (!data || typeof data !== 'object') return false;
-  const keys = ['countries', 'states', 'provinces'];
-  for (const key of keys) {
+  const validKeys = new Set(['countries', 'states', 'provinces', 'ca-provinces', 'mx-states']);
+  for (const key of Object.keys(data)) {
+    if (!validKeys.has(key)) return false;
     if (!Array.isArray(data[key])) return false;
     if (!data[key].every(item => typeof item === 'string' && item.length < 100)) return false;
   }
-  if (Object.keys(data).length !== 3) return false;
   return true;
 }
 
@@ -41,7 +41,7 @@ app.get('/api/:user/regions', async (req, res) => {
     res.json(JSON.parse(raw));
   } catch (err) {
     if (err.code === 'ENOENT') {
-      res.json({ countries: [], states: [], provinces: [] });
+      res.json({ countries: [], states: [], provinces: [], 'ca-provinces': [], 'mx-states': [] });
     } else {
       res.status(500).json({ error: 'Failed to read data' });
     }
