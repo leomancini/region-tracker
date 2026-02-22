@@ -32,14 +32,26 @@ const regionNames = {
   provinces: chinaNames,
 };
 
-const validMaps = new Set(Object.keys(mapRenderers));
+// Pretty URL slugs <-> internal map keys
+const slugToMap = {
+  world: 'countries',
+  us: 'states',
+  canada: 'ca-provinces',
+  mexico: 'mx-states',
+  china: 'provinces',
+};
+
+const mapToSlug = Object.fromEntries(
+  Object.entries(slugToMap).map(([slug, key]) => [key, slug])
+);
 
 function extractFromUrl() {
   const match = window.location.pathname.match(/^\/user\/([a-zA-Z0-9_-]+)(?:\/([a-zA-Z0-9_-]+))?/);
   if (!match) return { name: null, map: null };
+  const slug = match[2];
   return {
     name: match[1],
-    map: match[2] && validMaps.has(match[2]) ? match[2] : null,
+    map: slug && slugToMap[slug] ? slugToMap[slug] : null,
   };
 }
 
@@ -168,7 +180,7 @@ function setupEventListeners() {
 }
 
 function updateUrl() {
-  history.replaceState(null, '', `/user/${username}/${currentMap}`);
+  history.replaceState(null, '', `/user/${username}/${mapToSlug[currentMap]}`);
 }
 
 async function startApp(name, initialMap) {
