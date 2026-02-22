@@ -32,9 +32,15 @@ const regionNames = {
   provinces: chinaNames,
 };
 
-function extractUsername() {
-  const match = window.location.pathname.match(/^\/user\/([a-zA-Z0-9_-]+)/);
-  return match ? match[1] : null;
+const validMaps = new Set(Object.keys(mapRenderers));
+
+function extractFromUrl() {
+  const match = window.location.pathname.match(/^\/user\/([a-zA-Z0-9_-]+)(?:\/([a-zA-Z0-9_-]+))?/);
+  if (!match) return { name: null, map: null };
+  return {
+    name: match[1],
+    map: match[2] && validMaps.has(match[2]) ? match[2] : null,
+  };
 }
 
 async function loadUserData() {
@@ -111,6 +117,7 @@ function setupEventListeners() {
       document.querySelector('.segment.active').classList.remove('active');
       btn.classList.add('active');
       currentMap = btn.dataset.map;
+      updateUrl();
       renderMap();
     });
   });
@@ -160,14 +167,27 @@ function setupEventListeners() {
   });
 }
 
-async function startApp(name) {
+function updateUrl() {
+  history.replaceState(null, '', `/user/${username}/${currentMap}`);
+}
+
+async function startApp(name, initialMap) {
   username = name;
-  history.pushState(null, '', `/user/${name}`);
+  if (initialMap) {
+    currentMap = initialMap;
+  }
   document.getElementById('landing').classList.remove('active');
   document.getElementById('loader').classList.add('active');
 
   await loadUserData();
+
+  // Set the active segment to match currentMap
+  document.querySelectorAll('.segment').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.map === currentMap);
+  });
+
   await renderMap();
+  updateUrl();
 
   document.getElementById('loader').classList.remove('active');
   document.getElementById('app').classList.add('active');
@@ -186,14 +206,14 @@ function setupLanding() {
 }
 
 async function init() {
-  const name = extractUsername();
+  const { name, map } = extractFromUrl();
 
   if (!name) {
     setupLanding();
     return;
   }
 
-  startApp(name);
+  startApp(name, map);
 }
 
 init();
