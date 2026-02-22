@@ -58,6 +58,7 @@ function saveUserData() {
 
 async function renderMap() {
   const container = document.getElementById('map-container');
+  container.innerHTML = '<div class="spinner"></div>';
   await mapRenderers[currentMap](container);
   applyVisitedState();
   updateStats();
