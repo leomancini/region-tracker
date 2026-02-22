@@ -178,6 +178,31 @@ footer {
   background: #ddd;
 }
 
+/* Loader */
+#loader {
+  display: none;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+#loader.active {
+  display: flex;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #333;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* App view hidden by default */
 #app {
   display: none;

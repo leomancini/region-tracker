@@ -171,10 +171,13 @@ async function init() {
   }
 
   document.getElementById('landing').style.display = 'none';
-  document.getElementById('app').classList.add('active');
+  document.getElementById('loader').classList.add('active');
 
   await loadUserData();
   await renderMap();
+
+  document.getElementById('loader').classList.remove('active');
+  document.getElementById('app').classList.add('active');
   setupEventListeners();
 }
 
