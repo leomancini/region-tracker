@@ -157,6 +157,8 @@ function setupLanding() {
     e.preventDefault();
     const name = document.getElementById('name-input').value.trim().toLowerCase();
     if (name && /^[a-zA-Z0-9_-]+$/.test(name)) {
+      document.getElementById('landing').style.display = 'none';
+      document.getElementById('loader').classList.add('active');
       window.location.href = `/user/${name}`;
     }
   });
