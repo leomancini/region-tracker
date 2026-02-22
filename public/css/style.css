@@ -12,7 +12,6 @@ body {
   display: flex;
   flex-direction: column;
   padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Segmented Control */
@@ -99,7 +98,7 @@ body {
 /* Footer */
 footer {
   text-align: center;
-  padding: 0.5rem;
+  padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom));
   font-size: 0.8rem;
 }
 
