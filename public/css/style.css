@@ -176,8 +176,13 @@ footer {
   font-weight: 500;
 }
 
-#landing button:hover {
+#landing button:hover:not(:disabled) {
   background: #ddd;
+}
+
+#landing button:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
 /* Loader */

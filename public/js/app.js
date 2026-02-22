@@ -208,9 +208,16 @@ async function startApp(name, initialMap) {
 
 function setupLanding() {
   document.getElementById('landing').classList.add('active');
+  const input = document.getElementById('name-input');
+  const btn = document.getElementById('go-btn');
+
+  input.addEventListener('input', () => {
+    btn.disabled = !input.value.trim();
+  });
+
   document.getElementById('landing-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('name-input').value.trim().toLowerCase();
+    const name = input.value.trim().toLowerCase();
     if (name && /^[a-zA-Z0-9_-]+$/.test(name)) {
       startApp(name);
     }
