@@ -10,9 +10,40 @@ async function loadData() {
   return cachedData;
 }
 
+// Split overseas territories out of their parent country's MultiPolygon.
+// Each entry: [parentId, newId, test] where test(polygon) returns true for the territory.
+const territoriesToSplit = [
+  ['250', '254', poly => d3.geoCentroid({ type: 'Polygon', coordinates: poly })[0] < -20], // French Guiana
+];
+
+function splitTerritories(features) {
+  const result = [];
+  for (const feature of features) {
+    const rule = territoriesToSplit.find(([pid]) => pid === String(feature.id));
+    if (!rule || feature.geometry.type !== 'MultiPolygon') {
+      result.push(feature);
+      continue;
+    }
+    const [, newId, test] = rule;
+    const parentPolys = [];
+    const splitPolys = [];
+    for (const poly of feature.geometry.coordinates) {
+      (test(poly) ? splitPolys : parentPolys).push(poly);
+    }
+    if (splitPolys.length) {
+      result.push({ ...feature, geometry: { type: 'MultiPolygon', coordinates: parentPolys } });
+      result.push({ type: 'Feature', id: newId, properties: {}, geometry: { type: 'MultiPolygon', coordinates: splitPolys } });
+    } else {
+      result.push(feature);
+    }
+  }
+  return result;
+}
+
 export async function renderMap(container) {
   const world = await loadData();
   const countries = topojson.feature(world, world.objects.countries);
+  countries.features = splitTerritories(countries.features);
 
   container.innerHTML = '';
 
@@ -65,5 +96,6 @@ export const names = {
   '840':'United States','858':'Uruguay','860':'Uzbekistan','862':'Venezuela',
   '704':'Vietnam','887':'Yemen','894':'Zambia','716':'Zimbabwe',
   '010':'Antarctica','304':'Greenland','732':'W. Sahara',
-  '499':'Montenegro','807':'North Macedonia','275':'Palestine'
+  '499':'Montenegro','807':'North Macedonia','275':'Palestine',
+  '254':'French Guiana'
 };
