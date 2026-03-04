@@ -17,7 +17,7 @@ export async function renderMap(container) {
   container.innerHTML = '';
 
   const width = 975, height = 610;
-  const padTop = 75, padBottom = 50;
+  const padTop = 55, padBottom = 65;
   const path = d3.geoPath();
 
   const svg = d3.select(container).append("svg")
