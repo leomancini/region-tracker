@@ -107,6 +107,7 @@ function setupZoom() {
     .scaleExtent([1, 20])
     .on('zoom', (e) => {
       inner.attr('transform', e.transform);
+      inner.selectAll('path, polygon').style('stroke-width', 0.5 / e.transform.k + 'px');
     });
 
   svg.call(zoom);
@@ -263,7 +264,7 @@ function updateFavicon() {
 
 function updateUrl() {
   history.replaceState(null, '', `/user/${username}/${mapToSlug[currentMap]}`);
-  document.title = `Region Tracker - ${mapTitles[currentMap]}`;
+  document.title = `Region Tracker — ${mapTitles[currentMap]}`;
 }
 
 async function startApp(name, initialMap) {
