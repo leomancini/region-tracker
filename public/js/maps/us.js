@@ -17,10 +17,11 @@ export async function renderMap(container) {
   container.innerHTML = '';
 
   const width = 975, height = 610;
+  const padTop = 75, padBottom = 50;
   const path = d3.geoPath();
 
   const svg = d3.select(container).append("svg")
-    .attr("viewBox", `0 0 ${width} ${height}`);
+    .attr("viewBox", `0 ${-padTop} ${width} ${height + padTop + padBottom}`);
 
   svg.selectAll("path.state")
     .data(states.features)

@@ -47,6 +47,14 @@ const mapToSlug = Object.fromEntries(
   Object.entries(slugToMap).map(([slug, key]) => [key, slug])
 );
 
+const mapTitles = {
+  countries: 'World',
+  states: 'US',
+  'ca-provinces': 'Canada',
+  'mx-states': 'Mexico',
+  provinces: 'China',
+};
+
 function extractFromUrl() {
   const match = window.location.pathname.match(/^\/user\/([a-zA-Z0-9_-]+)(?:\/([a-zA-Z0-9_-]+))?/);
   if (!match) return { name: null, map: null };
@@ -174,6 +182,7 @@ function setupEventListeners() {
       btn.classList.add('active');
       currentMap = btn.dataset.map;
       updateUrl();
+      updateFavicon();
       renderMap();
     });
   });
@@ -232,8 +241,29 @@ function setupEventListeners() {
   }
 }
 
+function updateFavicon() {
+  const emoji = document.querySelector('.segment.active')?.textContent?.trim();
+  if (!emoji) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = 64;
+  canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.font = '56px serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(emoji, 32, 36);
+  let link = document.querySelector('link[rel="icon"]');
+  if (!link) {
+    link = document.createElement('link');
+    link.rel = 'icon';
+    document.head.appendChild(link);
+  }
+  link.href = canvas.toDataURL();
+}
+
 function updateUrl() {
   history.replaceState(null, '', `/user/${username}/${mapToSlug[currentMap]}`);
+  document.title = `Region Tracker - ${mapTitles[currentMap]}`;
 }
 
 async function startApp(name, initialMap) {
@@ -253,6 +283,7 @@ async function startApp(name, initialMap) {
 
   await renderMap();
   updateUrl();
+  updateFavicon();
 
   document.getElementById('loader').classList.remove('active');
   document.getElementById('app').classList.add('active');

@@ -18,8 +18,11 @@ export async function renderMap(container) {
 
   container.innerHTML = '';
 
+  const padTop = 60, padBottom = 40;
   const width = 800, height = 600;
-  const projection = d3.geoMercator().fitSize([width, height], canada);
+  const projection = d3.geoMercator().fitExtent(
+    [[0, padTop], [width, height - padBottom]], canada
+  );
   const path = d3.geoPath(projection);
 
   const svg = d3.select(container).append("svg")

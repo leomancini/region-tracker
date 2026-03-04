@@ -48,7 +48,10 @@ export async function renderMap(container) {
   container.innerHTML = '';
 
   const width = 960, height = 500;
-  const projection = d3.geoNaturalEarth1().fitSize([width, height], countries);
+  const padTop = 40, padBottom = 25;
+  const projection = d3.geoNaturalEarth1().fitExtent(
+    [[0, padTop], [width, height - padBottom]], countries
+  );
   const path = d3.geoPath(projection);
 
   const svg = d3.select(container).append("svg")
